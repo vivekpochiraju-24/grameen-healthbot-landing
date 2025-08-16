@@ -2,41 +2,64 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+/* Grameen HealthBot Design System - Rural Healthcare Focus
 All colors MUST be HSL.
 */
 
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --foreground: 210 24% 16%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 210 24% 16%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 210 24% 16%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Health-focused primary palette - Deep teal */
+    --primary: 174 100% 29%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 174 76% 45%;
+    --primary-lighter: 174 60% 65%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Trust & care - Soft green */
+    --secondary: 142 76% 36%;
+    --secondary-foreground: 0 0% 100%;
+    --secondary-light: 142 60% 50%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Innovation - Blue accent */ 
+    --accent: 210 100% 50%;
+    --accent-foreground: 0 0% 100%;
+    --accent-light: 210 80% 70%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Supporting colors */
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 20% 55%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 174 100% 29%;
 
-    --radius: 0.5rem;
+    /* Health gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(174 100% 29%), hsl(174 76% 45%));
+    --gradient-secondary: linear-gradient(135deg, hsl(142 76% 36%), hsl(142 60% 50%));
+    --gradient-hero: linear-gradient(135deg, hsl(174 100% 29%), hsl(142 76% 36%), hsl(210 100% 50%));
+    --gradient-subtle: linear-gradient(180deg, hsl(0 0% 100%), hsl(210 40% 96%));
+
+    /* Healthcare shadows */
+    --shadow-primary: 0 10px 30px -10px hsl(174 100% 29% / 0.3);
+    --shadow-secondary: 0 8px 25px -8px hsl(142 76% 36% / 0.2);
+    --shadow-card: 0 4px 20px -4px hsl(210 24% 16% / 0.1);
+
+    /* Smooth transitions */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+    --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
 
@@ -101,5 +124,85 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  /* Healthcare-specific button variants */
+  .btn-hero {
+    @apply bg-primary hover:bg-primary-light text-primary-foreground px-8 py-4 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-primary;
+  }
+  
+  .btn-secondary-hero {
+    @apply bg-secondary hover:bg-secondary-light text-secondary-foreground px-8 py-4 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-secondary;
+  }
+  
+  .btn-outline-hero {
+    @apply border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground px-8 py-4 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105;
+  }
+
+  /* Card variants */
+  .card-feature {
+    @apply bg-card rounded-2xl p-6 shadow-card hover:shadow-lg transition-all duration-300 border border-border/50;
+  }
+  
+  .card-impact {
+    @apply bg-gradient-to-br from-card to-muted rounded-2xl p-6 shadow-card hover:shadow-primary transition-all duration-300;
+  }
+
+  /* Icon containers */
+  .icon-primary {
+    @apply w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary text-2xl;
+  }
+  
+  .icon-secondary {
+    @apply w-16 h-16 bg-secondary/10 rounded-2xl flex items-center justify-center text-secondary text-2xl;
+  }
+  
+  .icon-accent {
+    @apply w-16 h-16 bg-accent/10 rounded-2xl flex items-center justify-center text-accent text-2xl;
+  }
+
+  /* Animations */
+  .fade-in-up {
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+  
+  .bounce-in {
+    animation: bounceIn 0.8s ease-out forwards;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
   }
 }
