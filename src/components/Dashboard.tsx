@@ -21,6 +21,21 @@ import {
   LineChart,
   PieChart
 } from 'lucide-react';
+import {
+  LineChart as RechartsLine,
+  Line,
+  BarChart,
+  Bar,
+  PieChart as RechartsPie,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer
+} from 'recharts';
 
 interface DashboardProps {
   user: {
@@ -36,13 +51,83 @@ interface DashboardProps {
 const Dashboard = ({ user }: DashboardProps) => {
   const [activeTab, setActiveTab] = useState('overview');
 
-  // Mock health data
+  // Mock health data with historical data for charts
   const healthVitals = {
-    heartRate: { value: 72, unit: 'bpm', status: 'normal', trend: 'up' },
-    bloodPressure: { value: '120/80', unit: 'mmHg', status: 'normal', trend: 'stable' },
-    temperature: { value: 98.6, unit: '°F', status: 'normal', trend: 'stable' },
-    weight: { value: 65, unit: 'kg', status: 'normal', trend: 'down' },
-    bloodSugar: { value: 95, unit: 'mg/dL', status: 'normal', trend: 'stable' }
+    heartRate: { 
+      value: 72, 
+      unit: 'bpm', 
+      status: 'normal', 
+      trend: 'up',
+      history: [
+        { date: 'Mon', value: 75 },
+        { date: 'Tue', value: 73 },
+        { date: 'Wed', value: 71 },
+        { date: 'Thu', value: 70 },
+        { date: 'Fri', value: 72 },
+        { date: 'Sat', value: 73 },
+        { date: 'Sun', value: 72 }
+      ]
+    },
+    bloodPressure: { 
+      value: '120/80', 
+      unit: 'mmHg', 
+      status: 'normal', 
+      trend: 'stable',
+      history: [
+        { date: 'Mon', value: 122 },
+        { date: 'Tue', value: 120 },
+        { date: 'Wed', value: 121 },
+        { date: 'Thu', value: 119 },
+        { date: 'Fri', value: 120 },
+        { date: 'Sat', value: 118 },
+        { date: 'Sun', value: 120 }
+      ]
+    },
+    temperature: { 
+      value: 98.6, 
+      unit: '°F', 
+      status: 'normal', 
+      trend: 'stable',
+      history: [
+        { date: 'Mon', value: 98.4 },
+        { date: 'Tue', value: 98.6 },
+        { date: 'Wed', value: 98.5 },
+        { date: 'Thu', value: 98.7 },
+        { date: 'Fri', value: 98.6 },
+        { date: 'Sat', value: 98.5 },
+        { date: 'Sun', value: 98.6 }
+      ]
+    },
+    weight: { 
+      value: 65, 
+      unit: 'kg', 
+      status: 'normal', 
+      trend: 'down',
+      history: [
+        { date: 'Mon', value: 65.5 },
+        { date: 'Tue', value: 65.3 },
+        { date: 'Wed', value: 65.1 },
+        { date: 'Thu', value: 65.0 },
+        { date: 'Fri', value: 64.9 },
+        { date: 'Sat', value: 65.0 },
+        { date: 'Sun', value: 65.0 }
+      ]
+    },
+    bloodSugar: { 
+      value: 95, 
+      unit: 'mg/dL', 
+      status: 'normal', 
+      trend: 'stable',
+      history: [
+        { date: 'Mon', value: 96 },
+        { date: 'Tue', value: 94 },
+        { date: 'Wed', value: 95 },
+        { date: 'Thu', value: 97 },
+        { date: 'Fri', value: 95 },
+        { date: 'Sat', value: 94 },
+        { date: 'Sun', value: 95 }
+      ]
+    }
   };
 
   const recentActivities = [
@@ -248,12 +333,34 @@ const Dashboard = ({ user }: DashboardProps) => {
                       </Badge>
                     </div>
                     
-                    {/* Mock Chart */}
-                    <div className="h-32 bg-muted/30 rounded-lg flex items-center justify-center">
-                      <div className="text-center text-muted-foreground">
-                        <LineChart className="h-8 w-8 mx-auto mb-2" />
-                        <span className="text-sm">7-day trend chart</span>
-                      </div>
+                    {/* Interactive Chart */}
+                    <div className="h-32 w-full mt-4">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <RechartsLine data={vital.history} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
+                          <Line 
+                            type="monotone" 
+                            dataKey="value" 
+                            stroke="#3b82f6" 
+                            strokeWidth={2} 
+                            dot={false} 
+                            activeDot={{ r: 4 }}
+                          />
+                          <XAxis 
+                            dataKey="date" 
+                            axisLine={false} 
+                            tickLine={false} 
+                            tick={{ fontSize: 10 }}
+                          />
+                          <Tooltip 
+                            contentStyle={{ 
+                              backgroundColor: 'hsl(var(--card))',
+                              borderColor: 'hsl(var(--border))',
+                              borderRadius: '0.5rem',
+                              fontSize: '0.75rem'
+                            }}
+                          />
+                        </RechartsLine>
+                      </ResponsiveContainer>
                     </div>
                   </CardContent>
                 </Card>
@@ -346,11 +453,38 @@ const Dashboard = ({ user }: DashboardProps) => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-40 bg-muted/30 rounded-lg flex items-center justify-center">
-                    <div className="text-center text-muted-foreground">
-                      <BarChart3 className="h-12 w-12 mx-auto mb-2" />
-                      <span>Health trends chart</span>
-                    </div>
+                  <div className="h-40 w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={[
+                        { name: 'Heart', value: 72, fill: '#3b82f6' },
+                        { name: 'BP', value: 120, fill: '#10b981' },
+                        { name: 'Temp', value: 98.6, fill: '#f59e0b' },
+                        { name: 'Weight', value: 65, fill: '#8b5cf6' },
+                        { name: 'Glucose', value: 95, fill: '#ec4899' }
+                      ]}>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--muted))" />
+                        <XAxis dataKey="name" axisLine={false} tickLine={false} />
+                        <YAxis axisLine={false} tickLine={false} />
+                        <Tooltip 
+                          contentStyle={{ 
+                            backgroundColor: 'hsl(var(--card))',
+                            borderColor: 'hsl(var(--border))',
+                            borderRadius: '0.5rem'
+                          }}
+                        />
+                        <Bar dataKey="value" radius={[4, 4, 0, 0]}>
+                          {[
+                            { name: 'Heart', value: 72, fill: '#3b82f6' },
+                            { name: 'BP', value: 120, fill: '#10b981' },
+                            { name: 'Temp', value: 98.6, fill: '#f59e0b' },
+                            { name: 'Weight', value: 65, fill: '#8b5cf6' },
+                            { name: 'Glucose', value: 95, fill: '#ec4899' }
+                          ].map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.fill} />
+                          ))}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
                   </div>
                 </CardContent>
               </Card>
@@ -365,9 +499,38 @@ const Dashboard = ({ user }: DashboardProps) => {
                 <CardContent>
                   <div className="text-center">
                     <div className="text-4xl font-bold text-secondary mb-2">85/100</div>
-                    <div className="text-muted-foreground">Overall Health Score</div>
-                    <div className="h-20 bg-muted/30 rounded-lg mt-4 flex items-center justify-center">
-                      <PieChart className="h-8 w-8 text-muted-foreground" />
+                    <div className="text-muted-foreground mb-4">Overall Health Score</div>
+                    <div className="h-40 w-full">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <RechartsPie>
+                          <Pie
+                            data={[
+                              { name: 'Score', value: 85, color: '#3b82f6' },
+                              { name: 'Remaining', value: 15, color: 'hsl(var(--muted))' }
+                            ]}
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={40}
+                            outerRadius={60}
+                            paddingAngle={2}
+                            dataKey="value"
+                          >
+                            {[
+                              { name: 'Score', value: 85, color: '#3b82f6' },
+                              { name: 'Remaining', value: 15, color: 'hsl(var(--muted))' }
+                            ].map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={entry.color} />
+                            ))}
+                          </Pie>
+                          <Tooltip 
+                            contentStyle={{ 
+                              backgroundColor: 'hsl(var(--card))',
+                              borderColor: 'hsl(var(--border))',
+                              borderRadius: '0.5rem'
+                            }}
+                          />
+                        </RechartsPie>
+                      </ResponsiveContainer>
                     </div>
                   </div>
                 </CardContent>

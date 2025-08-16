@@ -52,7 +52,17 @@ const Index = () => {
       />
 
       {isLoggedIn ? (
-        <Dashboard user={currentUser} />
+        <div>
+          <div id="home" className="pt-16">
+            <Dashboard user={currentUser} />
+          </div>
+          <div id="how-it-works"></div>
+          <div id="technology"></div>
+          <div id="impact"></div>
+          <div id="contact">
+            <Footer />
+          </div>
+        </div>
       ) : (
         <>
           <div id="home">

@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Phone, User, Menu, X, Bot } from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 interface HeaderProps {
   isLoggedIn: boolean;
@@ -14,6 +15,8 @@ interface HeaderProps {
 
 const Header = ({ isLoggedIn, onLogin, onLogout, currentUser }: HeaderProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const navItems = [
     { label: 'Home', href: '#home' },
@@ -23,20 +26,81 @@ const Header = ({ isLoggedIn, onLogin, onLogout, currentUser }: HeaderProps) => 
     { label: 'Contact', href: '#contact' },
   ];
 
+  const handleNavClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    
+    // Close mobile menu if open
+    setIsMobileMenuOpen(false);
+    
+    // If we're not on the home page, navigate to home first
+    if (location.pathname !== '/') {
+      navigate('/');
+      // Small delay to allow the page to load before scrolling
+      setTimeout(() => {
+        scrollToSection(href);
+      }, 100);
+    } else {
+      scrollToSection(href);
+    }
+  }, [location.pathname, navigate]);
+
+  const scrollToSection = (sectionId: string) => {
+    if (!sectionId.startsWith('#')) return;
+    
+    const element = document.querySelector(sectionId);
+    if (element) {
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }
+  };
+
   return (
     <header className="fixed top-0 left-0 right-0 bg-background/95 backdrop-blur-md border-b border-border z-50">
       <div className="container mx-auto max-w-7xl px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div className="flex items-center space-x-3">
-            <div className="icon-primary">
-              <Bot />
-            </div>
-            <div>
+          <a href="/" className="flex items-center space-x-3 hover:opacity-90 transition-opacity">
+            <img 
+              src="/ChatGPT Image Aug 15, 2025, 08_52_57 PM.png" 
+              alt="Grameen HealthBot Logo" 
+              className="h-10 w-auto object-contain"
+              onError={(e) => {
+                // Fallback to text if image fails to load
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+                const parent = target.parentElement;
+                if (parent) {
+                  const fallback = document.createElement('div');
+                  fallback.className = 'flex items-center space-x-3';
+                  fallback.innerHTML = `
+                    <div class="icon-primary">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2v4"/>
+                        <path d="M12 18v4"/>
+                        <path d="M4.93 4.93L7.76 7.76"/>
+                        <path d="M16.24 16.24L19.07 19.07"/>
+                        <path d="M2 12h4"/>
+                        <path d="M18 12h4"/>
+                        <path d="M4.93 19.07L7.76 16.24"/>
+                        <path d="M16.24 7.76L19.07 4.93"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <h1 class="text-xl font-bold text-foreground">Grameen HealthBot</h1>
+                      <p class="text-xs text-muted-foreground">Healthcare for All</p>
+                    </div>
+                  `;
+                  parent.appendChild(fallback);
+                }
+              }}
+            />
+            <div className="hidden md:block">
               <h1 className="text-xl font-bold text-foreground">Grameen HealthBot</h1>
               <p className="text-xs text-muted-foreground">Healthcare for All</p>
             </div>
-          </div>
+          </a>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:block">
@@ -44,7 +108,8 @@ const Header = ({ isLoggedIn, onLogin, onLogout, currentUser }: HeaderProps) => 
               {navItems.map((item) => (
                 <li key={item.href}>
                   <a 
-                    href={item.href} 
+                    href={item.href}
+                    onClick={(e) => handleNavClick(e, item.href)}
                     className="text-muted-foreground hover:text-primary transition-colors duration-300 font-medium"
                   >
                     {item.label}
@@ -101,7 +166,7 @@ const Header = ({ isLoggedIn, onLogin, onLogout, currentUser }: HeaderProps) => 
                   key={item.href}
                   href={item.href}
                   className="block text-muted-foreground hover:text-primary transition-colors duration-300 font-medium"
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  onClick={(e) => handleNavClick(e, item.href)}
                 >
                   {item.label}
                 </a>
