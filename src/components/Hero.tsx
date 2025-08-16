@@ -5,7 +5,7 @@ import heroImage from '@/assets/hero-village-robot.jpg';
 
 const Hero = () => {
   return (
-    <section className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-muted/30 to-primary/5 px-4 py-16">
+    <section className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-muted/30 to-primary/5 px-4 py-16 pt-24">
       <div className="container mx-auto max-w-7xl">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Content */}
